@@ -3,6 +3,16 @@ entries:
   kompass-admission-controller:
   - apiVersion: v2
     appVersion: stable
+    created: "2025-04-01T12:48:50.408163616Z"
+    description: A Helm chart for Kompass Admission Controller Subsystem
+    digest: 6b7c1cf4600ea8f1ba0f9e313c038f5ad112482134ba4a94b302a427e6e49b69
+    name: kompass-admission-controller
+    type: application
+    urls:
+    - https://github.com/zesty-co/kompass-admission-controller/releases/download/kompass-admission-controller-0.1.2/kompass-admission-controller-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
+    appVersion: stable
     created: "2025-04-01T12:02:07.661807157Z"
     description: A Helm chart for Kompass Admission Controller Subsystem
     digest: 9998c79262a8c569569e696ba1fa05daec3d0be2a14c5070837942885cf77fa9
@@ -11,4 +21,4 @@ entries:
     urls:
     - https://github.com/zesty-co/kompass-admission-controller/releases/download/kompass-admission-controller-0.1.1/kompass-admission-controller-0.1.1.tgz
     version: 0.1.1
-generated: "2025-04-01T12:02:07.661817036Z"
+generated: "2025-04-01T12:48:50.408176551Z"
