@@ -52,7 +52,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: MANAGER_HOST
-              value: {{ include "kompass-admission-controller.grpcEndpoint" . | quote }}
+              value: {{ .Values.grpc.endpoint }}
       volumes:
         - name: webhook-tls
           secret:

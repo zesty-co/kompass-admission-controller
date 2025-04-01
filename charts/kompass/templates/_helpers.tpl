@@ -35,14 +35,6 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{/*
-Generate the GRPC endpoint name for the admission controller service.
-Format: <fullname>-<namespace>-svc
-*/}}
-{{- define "kompass-admission-controller.grpcEndpoint" -}}
-{{ printf "%s-svc" (include "kompass-admission-controller.fullname" .) }}
-{{- end }}
-
-{{/*
 Create a service name for secrets.
 */}}
 {{- define "kompass-admission-controller.serviceName" -}}
