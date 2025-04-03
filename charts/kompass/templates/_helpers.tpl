@@ -90,22 +90,6 @@ Create a rb name.
   {{- printf "%s-rb" (include "kompass-admission-controller.fullname" .) | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
-
-{{/*
-Create an insights svc name.
-*/}}
-{{- define "kompass-admission-controller.insights-svc" -}}
-  {{- printf "%s-kompass-insights-svc" (include "kompass-admission-controller.fullname" .) | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
-
-{{/*
-Create an insights secret name.
-*/}}
-{{- define "kompass-admission-controller.insights-secret" -}}
-  {{- printf "%s-kompass-insights-secret" (include "kompass-admission-controller.fullname" .) | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
 {{/*
 Generate a CA certificate for the admission controller.
 */}}

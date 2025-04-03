@@ -11,6 +11,6 @@ rules:
     resources:
       - secrets
     resourceNames:
-      - "{{ include "kompass-admission-controller.insights-secret" . }}"
+      - "{{ .Values.insights.secret }}"
     verbs:
       - get

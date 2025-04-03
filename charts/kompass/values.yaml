@@ -4,6 +4,12 @@ nameOverride: ~
 # -- (string) Override the fully qualified name
 fullnameOverride: ~
 
+insights:
+  # -- (string) Override the Kompass Insights generated secret name
+  secret: "kompass-insights-secret"
+  # -- (string) Override the Kompass Insights generated service name
+  service: "kompass-insights-svc"
+
 grpc:
   server:
     # -- (int) Port for the gRPC server
