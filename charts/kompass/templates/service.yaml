@@ -3,7 +3,7 @@ kind: Service
 metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "0"
-  name: {{ include "kompass-admission-controller.serviceName" . }}
+  name: {{ .Values.service.name }}
 spec:
   selector:
     app: {{ include "kompass-admission-controller.fullname" . }}

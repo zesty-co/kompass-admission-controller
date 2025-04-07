@@ -9,7 +9,7 @@ webhooks:
 - name: nodepool.karpenter.sh
   clientConfig:
     service:
-      name: {{ include "kompass-admission-controller.serviceName" . }}
+      name: {{ .Values.service.name }}
       namespace: {{ .Release.Namespace }}
       path: /mutate
     caBundle: {{ include "kompass-admission-controller.cert" . | fromYaml | dig "Cert" "" | b64enc }}

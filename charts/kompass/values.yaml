@@ -43,11 +43,9 @@ deployment:
       # -- (string) Memory request for scheduling
       memory: 2Gi
 
-configMap:
-  # -- (string) Hostname for Kompass Insights
-  insightsHost: ~
-  # -- (string) Kompass Insights secret name
-  insightsSecret: ~
+service:
+  # -- (string) Name of the controller service
+  name: "kompass-admission-controller-svc"
 
 pdb:
   # -- (int) Maximum number of unavailable pods in the pod disruption budget

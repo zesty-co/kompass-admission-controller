@@ -35,13 +35,6 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{/*
-Create a service name for secrets.
-*/}}
-{{- define "kompass-admission-controller.serviceName" -}}
-  {{- printf "%s-svc" (include "kompass-admission-controller.fullname" .) | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
-{{/*
 Create a config map name.
 */}}
 {{- define "kompass-admission-controller.configMap" -}}
@@ -103,7 +96,7 @@ Generate a signed certificate for the admission controller.
 */}}
 {{- define "kompass-admission-controller.cert" -}}
 {{- $ca := genCA (printf "*.%s.svc" (.Release.Namespace)) 1024 -}}
-{{- $svcName := printf "%s.%s.svc" (include "kompass-admission-controller.serviceName" .) (.Release.Namespace) -}}
+{{- $svcName := printf "%s.%s.svc" (.Values.service.name) (.Release.Namespace) -}}
 {{- $cert := genSignedCert $svcName nil (list $svcName) 1024 $ca -}}
 {{- toYaml $cert -}}
 {{- end -}}
