@@ -25,6 +25,9 @@ jobs:
       - name: setup helm
         uses: azure/setup-helm@v4
 
+      - name: Run helm lint
+        run: helm lint ./charts/*
+
       - name: release chart
         uses: helm/chart-releaser-action@v1.7.0
         env:
