@@ -15,14 +15,40 @@ webhooks:
       path: /mutate
     caBundle: {{ $cert | dig "CaCert" "" | b64enc }}
   rules:
-  - operations: ["CREATE", "UPDATE", "CONNECT"]
-    apiGroups: ["apps"]
-    apiVersions: ["v1"]
-    resources: ["deployments"]
-  - operations: ["CREATE", "UPDATE", "CONNECT"]
-    apiGroups: ["karpenter.sh"]
-    apiVersions: ["v1beta1", "v1"]
-    resources: ["nodepools"]
+    - operations:
+        - "CREATE"
+        - "UPDATE"
+        - "CONNECT"
+      apiGroups:
+        - "apps"
+      apiVersions:
+        - "v1"
+      resources:
+        - "deployments"
+    - operations:
+        - "CREATE"
+        - "UPDATE"
+        - "CONNECT"
+      apiGroups:
+        - "autoscaling"
+      apiVersions:
+        - "v1"
+        - "v2beta1"
+        - "v2beta2"
+        - "v2"
+      resources:
+        - "horizontalpodautoscalers"
+    - operations:
+        - "CREATE"
+        - "UPDATE"
+        - "CONNECT"
+      apiGroups:
+        - "karpenter.sh"
+      apiVersions:
+        - "v1beta1"
+        - "v1"
+      resources:
+        - "nodepools"
   admissionReviewVersions: ["v1"]
   sideEffects: None
   timeoutSeconds: 10

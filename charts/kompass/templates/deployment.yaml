@@ -41,6 +41,9 @@ spec:
             - mountPath: "/etc/webhook/tls"
               name: webhook-tls
               readOnly: true
+            - mountPath: "/tmp/k8s-webhook-server/serving-certs"
+              name: webhook-tls
+              readOnly: true
           {{- with .Values.deployment.resources }}
           resources:
           {{- toYaml . | nindent 12 }}
