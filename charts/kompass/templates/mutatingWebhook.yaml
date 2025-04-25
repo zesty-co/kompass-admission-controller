@@ -1,4 +1,3 @@
----
 {{- $cert := include "kompass-admission-controller.cert" . | fromYaml -}}
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration

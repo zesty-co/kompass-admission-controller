@@ -29,6 +29,7 @@ rules:
     verbs:
       - get
       - list
+      - watch
       - patch
   - apiGroups:
       - keda.sh
@@ -46,6 +47,14 @@ rules:
       - get
       - list
       - patch
+  - apiGroups:
+      - kompass.zesty.co
+    resources:
+      - workloaddescriptors
+    verbs:
+      - get
+      - list
+      - watch
   - apiGroups:
       - zesty.co
     resources:
