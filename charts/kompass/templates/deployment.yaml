@@ -15,6 +15,8 @@ spec:
     metadata:
       labels:
         app: {{ include "kompass-admission-controller.fullname" . }}
+      annotations:
+        checksum/webhook-tls: {{ include (print $.Template.BasePath "/mutatingWebhook.yaml") . | sha256sum }}
     spec:
       serviceAccountName: "{{ include "kompass-admission-controller.sa" . }}"
       {{- if .Values.deployment.nodeSelector }}
@@ -39,6 +41,9 @@ spec:
             - mountPath: "/etc/webhook/tls"
               name: webhook-tls
               readOnly: true
+            - mountPath: "/tmp/k8s-webhook-server/serving-certs"
+              name: webhook-tls
+              readOnly: true
           {{- with .Values.deployment.resources }}
           resources:
           {{- toYaml . | nindent 12 }}
@@ -56,4 +61,4 @@ spec:
       volumes:
         - name: webhook-tls
           secret:
-            secretName: {{ .Values.service.name }}.{{ .Release.Namespace }}.svc.zesty-admission-controller-tls-pair
+            secretName: {{ include "kompass-admission-controller.fullname" . }}

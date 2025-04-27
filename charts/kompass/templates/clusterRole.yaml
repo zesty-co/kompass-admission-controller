@@ -23,6 +23,15 @@ rules:
       - get
       - list
   - apiGroups:
+      - autoscaling
+    resources:
+      - horizontalpodautoscalers
+    verbs:
+      - get
+      - list
+      - watch
+      - patch
+  - apiGroups:
       - keda.sh
     resources:
       - scaledjobs
@@ -38,6 +47,14 @@ rules:
       - get
       - list
       - patch
+  - apiGroups:
+      - kompass.zesty.co
+    resources:
+      - workloaddescriptors
+    verbs:
+      - get
+      - list
+      - watch
   - apiGroups:
       - zesty.co
     resources:

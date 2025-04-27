@@ -84,19 +84,12 @@ Create a rb name.
 {{- end -}}
 
 {{/*
-Generate a CA certificate for the admission controller.
-*/}}
-{{- define "kompass-admission-controller.ca" -}}
-{{- $ca := genCA (printf "*.%s.svc" (.Release.Namespace)) 1024 -}}
-{{- toYaml $ca -}}
-{{- end -}}
-
-{{/*
 Generate a signed certificate for the admission controller.
 */}}
 {{- define "kompass-admission-controller.cert" -}}
 {{- $ca := genCA (printf "*.%s.svc" (.Release.Namespace)) 1024 -}}
 {{- $svcName := printf "%s.%s.svc" (.Values.service.name) (.Release.Namespace) -}}
 {{- $cert := genSignedCert $svcName nil (list $svcName) 1024 $ca -}}
-{{- toYaml $cert -}}
+{{- $certData := dict "CaCert" $ca.Cert "CaKey" $ca.Key "Cert" $cert.Cert "Key" $cert.Key -}}
+{{- toYaml $certData -}}
 {{- end -}}
