@@ -28,7 +28,7 @@ deployment:
   tolerations: []
   image:
     # -- (string) Image repository
-    repository: "672188301118.dkr.ecr.eu-west-1.amazonaws.com/zesty-k8s/mutating-admission-webhook"
+    repository: "672188301118.dkr.ecr.eu-west-1.amazonaws.com/zesty-k8s/action-taker"
     # -- (string) Image pull policy (e.g., Always, IfNotPresent, Never)
     pullPolicy: Always
     # -- (string) Image tag (version)
