@@ -4,6 +4,10 @@ nameOverride: ~
 # -- (string) Override the fully qualified name
 fullnameOverride: ~
 
+webhook:
+  # -- (string) webhook failure policy
+  failurePolicy: Ignore # or "Fail"
+
 insights:
   # -- (string) Override the Kompass Insights generated secret name
   secret: "kompass-insights-secret"
