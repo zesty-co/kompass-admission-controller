@@ -31,6 +31,7 @@ rules:
       - list
       - watch
       - patch
+      - update
   - apiGroups:
       - keda.sh
     resources:
@@ -55,6 +56,8 @@ rules:
       - get
       - list
       - watch
+      - update
+      - patch
   - apiGroups:
       - zesty.co
     resources:
