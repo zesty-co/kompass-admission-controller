@@ -53,7 +53,7 @@ spec:
                 name: {{ include "kompass-admission-controller.configMap" . }}
           env:
             {{- if .Values.cxLogging.enabled }}
-            - name: CX_API_KEYAdd commentMore actions
+            - name: CX_API_KEY
               value: {{ .Values.cxLogging.apiKey }}
             - name: CX_CLUSTER_NAME
               value: {{ .Values.cxLogging.clusterName }}
