@@ -82,14 +82,3 @@ Create a rb name.
 {{- define "kompass-admission-controller.rb" -}}
   {{- printf "%s-rb" (include "kompass-admission-controller.fullname" .) | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
-
-{{/*
-Generate a signed certificate for the admission controller.
-*/}}
-{{- define "kompass-admission-controller.cert" -}}
-{{- $ca := genCA (printf "*.%s.svc" (.Release.Namespace)) 1024 -}}
-{{- $svcName := printf "%s.%s.svc" (.Values.service.name) (.Release.Namespace) -}}
-{{- $cert := genSignedCert $svcName nil (list $svcName) 1024 $ca -}}
-{{- $certData := dict "CaCert" $ca.Cert "CaKey" $ca.Key "Cert" $cert.Cert "Key" $cert.Key -}}
-{{- toYaml $certData -}}
-{{- end -}}

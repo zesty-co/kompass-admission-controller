@@ -1,10 +1,10 @@
-{{- $cert := include "kompass-admission-controller.cert" . | fromYaml -}}
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
 metadata:
   name: {{ include "kompass-admission-controller.fullname" . }}
   annotations:
     argocd.argoproj.io/sync-wave: "5"
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "kompass-admission-controller.fullname" . }}-cert
 webhooks:
 - name: nodepool.karpenter.sh
   clientConfig:
@@ -12,7 +12,6 @@ webhooks:
       name: {{ .Values.service.name }}
       namespace: {{ .Release.Namespace }}
       path: /mutate
-    caBundle: {{ $cert | dig "CaCert" "" | b64enc }}
   rules:
     - operations:
         - "CREATE"
@@ -53,29 +52,36 @@ webhooks:
   timeoutSeconds: 10
   failurePolicy: {{ .Values.webhook.failurePolicy | default "Ignore" | quote }}
 ---
-apiVersion: v1
-kind: Secret
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
 metadata:
-  name: {{ include "kompass-admission-controller.fullname" . }}
-  labels:
-    app: {{ include "kompass-admission-controller.fullname" . }}
+  name: selfsigned-issuer
   annotations:
-    argocd.argoproj.io/sync-wave: "0"
-    self-signed-cert: "true"
-type: kubernetes.io/tls
-data:
-  tls.key: {{ $cert | dig "Key" "" | b64enc }}
-  tls.crt: {{ $cert | dig "Cert" "" | b64enc }}
+  {{ if .Values.useHelmPriorityHooks }}
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-weight: "15"
+  {{ end }}
+spec:
+  selfSigned: {}
 ---
-apiVersion: v1
-kind: Secret
+apiVersion: cert-manager.io/v1
+kind: Certificate
 metadata:
-  name: {{ include "kompass-admission-controller.fullname" . }}-ca
-  labels:
-    app: {{ include "kompass-admission-controller.fullname" . }}
+  name: {{ include "kompass-admission-controller.fullname" . }}-cert
+  namespace: {{ .Release.Namespace }}  # Ensure it's deployed in the correct namespace
   annotations:
-    argocd.argoproj.io/sync-wave: "0"
-type: kubernetes.io/tls
-data:
-  tls.key: {{ $cert | dig "CaKey" "" | b64enc }}
-  tls.crt: {{ $cert | dig "CaCert" "" | b64enc }}
+  {{ if .Values.useHelmPriorityHooks }}
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-weight: "20"
+  {{ end }}
+    cert-manager.io/disable-name-generation: "true"
+  labels:
+    {{- include "pod-rightsizing.labels" . | nindent 4 }}
+spec:
+  secretName: {{ include "kompass-admission-controller.fullname" . }}-cert
+  dnsNames:
+    - {{ include "kompass-webhook-svc.name" . }}.{{ .Release.Namespace }}.svc
+    - {{ include "kompass-webhook-svc.name" . }}.{{ .Release.Namespace }}.svc.cluster.local
+  issuerRef:
+    kind: ClusterIssuer
+    name: selfsigned-issuer
