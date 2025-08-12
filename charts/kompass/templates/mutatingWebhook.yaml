@@ -75,8 +75,6 @@ metadata:
     helm.sh/hook-weight: "20"
   {{ end }}
     cert-manager.io/disable-name-generation: "true"
-  labels:
-    {{- include "pod-rightsizing.labels" . | nindent 4 }}
 spec:
   secretName: {{ include "kompass-admission-controller.fullname" . }}-cert
   dnsNames:
