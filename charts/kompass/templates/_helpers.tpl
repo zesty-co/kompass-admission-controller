@@ -82,3 +82,21 @@ Create a rb name.
 {{- define "kompass-admission-controller.rb" -}}
   {{- printf "%s-rb" (include "kompass-admission-controller.fullname" .) | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+
+{{- define "kompass-admission-controller.labels" -}}
+helm.sh/chart: {{ include "kompass-admission-controller.chart" . }}
+{{ include "kompass-admission-controller.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
+Selector labels
+*/}}
+{{- define "kompass-admission-controller.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "kompass-admission-controller.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
