@@ -58,7 +58,7 @@ metadata:
   name: {{ include "kompass-admission-controller.fullname" . }}-cert
   namespace: {{ .Release.Namespace }}  # Ensure it's deployed in the correct namespace
   annotations:
-  {{ if and .Values.global .Values.global.useHelmPriorityHooks }}
+  {{ if .Values.global.useHelmPriorityHooks | default false}}
     helm.sh/hook: post-install,post-upgrade
     helm.sh/hook-weight: "20"
   {{ end }}
@@ -72,4 +72,4 @@ spec:
     - {{ .Values.service.name }}.{{ .Release.Namespace }}.svc.cluster.local
   issuerRef:
     kind: ClusterIssuer
-    name: {{ .Values.global.clusterIssuerName }}
+    name: {{ .Values.global.clusterIssuerName | default ""}}
