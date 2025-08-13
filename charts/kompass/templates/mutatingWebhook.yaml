@@ -72,4 +72,4 @@ spec:
     - {{ .Values.service.name }}.{{ .Release.Namespace }}.svc.cluster.local
   issuerRef:
     kind: ClusterIssuer
-    name: {{ if and .Values.global .Values.global.clusterIssuerName }}
+    name: {{ .Values.global.clusterIssuerName }}
