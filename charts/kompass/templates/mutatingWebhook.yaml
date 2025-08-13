@@ -4,7 +4,7 @@ metadata:
   name: {{ include "kompass-admission-controller.fullname" . }}
   annotations:
     argocd.argoproj.io/sync-wave: "5"
-    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "kompass-admission-controller.fullname" . }}-cert
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "kompass-admission-controller.name" . }}-webhook-cert
 webhooks:
 - name: nodepool.karpenter.sh
   clientConfig:
@@ -51,27 +51,3 @@ webhooks:
   sideEffects: None
   timeoutSeconds: 10
   failurePolicy: {{ .Values.webhook.failurePolicy | default "Ignore" | quote }}
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: {{ include "kompass-admission-controller.fullname" . }}-cert
-  namespace: {{ .Release.Namespace }}  # Ensure it's deployed in the correct namespace
-  annotations:
-  {{ if and .Values.global .Values.global.useHelmPriorityHooks | default false }}
-    helm.sh/hook: post-install,post-upgrade
-    helm.sh/hook-weight: "20"
-  {{ end }}
-    cert-manager.io/disable-name-generation: "true"
-  labels:
-    {{- include "kompass-admission-controller.labels" . | nindent 4 }}
-spec:
-  secretName: {{ include "kompass-admission-controller.fullname" . }}-cert
-  dnsNames:
-    - {{ .Values.service.name }}.{{ .Release.Namespace }}.svc
-    - {{ .Values.service.name }}.{{ .Release.Namespace }}.svc.cluster.local
-  issuerRef:
-    kind: ClusterIssuer
-    {{ if .Values.global }}
-      name: {{ .Values.global.clusterIssuerName }}
-    {{ end }}
