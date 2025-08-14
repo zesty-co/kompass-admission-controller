@@ -1,7 +1,7 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: v-
+  name: {{ include "kompass-admission-controller.name" . }}-webhook-cert
   namespace: {{ .Release.Namespace }}  # Ensure it's deployed in the correct namespace
   annotations:
   {{ if and .Values.global .Values.global.useHelmPriorityHooks | default true }}
