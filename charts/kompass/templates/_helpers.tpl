@@ -83,13 +83,20 @@ Create a rb name.
   {{- printf "%s-rb" (include "kompass-admission-controller.fullname" .) | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
+{{- define "kompass-admission-controller.labels" -}}
+helm.sh/chart: {{ include "kompass-admission-controller.chart" . }}
+{{ include "kompass-admission-controller.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
 {{/*
-Generate a signed certificate for the admission controller.
+Selector labels
 */}}
-{{- define "kompass-admission-controller.cert" -}}
-{{- $ca := genCA (printf "*.%s.svc" (.Release.Namespace)) 1024 -}}
-{{- $svcName := printf "%s.%s.svc" (.Values.service.name) (.Release.Namespace) -}}
-{{- $cert := genSignedCert $svcName nil (list $svcName) 1024 $ca -}}
-{{- $certData := dict "CaCert" $ca.Cert "CaKey" $ca.Key "Cert" $cert.Cert "Key" $cert.Key -}}
-{{- toYaml $certData -}}
-{{- end -}}
+{{- define "kompass-admission-controller.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "kompass-admission-controller.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+

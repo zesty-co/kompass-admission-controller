@@ -1,10 +1,10 @@
-{{- $cert := include "kompass-admission-controller.cert" . | fromYaml -}}
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
 metadata:
   name: {{ include "kompass-admission-controller.fullname" . }}
   annotations:
     argocd.argoproj.io/sync-wave: "5"
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "kompass-admission-controller.name" . }}-webhook-cert
 webhooks:
 - name: nodepool.karpenter.sh
   clientConfig:
@@ -12,7 +12,6 @@ webhooks:
       name: {{ .Values.service.name }}
       namespace: {{ .Release.Namespace }}
       path: /mutate
-    caBundle: {{ $cert | dig "CaCert" "" | b64enc }}
   rules:
     - operations:
         - "CREATE"
@@ -52,30 +51,3 @@ webhooks:
   sideEffects: None
   timeoutSeconds: 10
   failurePolicy: {{ .Values.webhook.failurePolicy | default "Ignore" | quote }}
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: {{ include "kompass-admission-controller.fullname" . }}
-  labels:
-    app: {{ include "kompass-admission-controller.fullname" . }}
-  annotations:
-    argocd.argoproj.io/sync-wave: "0"
-    self-signed-cert: "true"
-type: kubernetes.io/tls
-data:
-  tls.key: {{ $cert | dig "Key" "" | b64enc }}
-  tls.crt: {{ $cert | dig "Cert" "" | b64enc }}
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: {{ include "kompass-admission-controller.fullname" . }}-ca
-  labels:
-    app: {{ include "kompass-admission-controller.fullname" . }}
-  annotations:
-    argocd.argoproj.io/sync-wave: "0"
-type: kubernetes.io/tls
-data:
-  tls.key: {{ $cert | dig "CaKey" "" | b64enc }}
-  tls.crt: {{ $cert | dig "CaCert" "" | b64enc }}
