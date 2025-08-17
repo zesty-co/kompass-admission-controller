@@ -71,4 +71,4 @@ spec:
       volumes:
         - name: webhook-tls
           secret:
-            secretName: {{ include "kompass-admission-controller.fullname" . }}
+            secretName: {{ include "kompass-admission-controller.name" . }}-webhook-cert
