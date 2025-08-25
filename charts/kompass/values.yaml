@@ -4,6 +4,13 @@ nameOverride: ~
 # -- (string) Override the fully qualified name
 fullnameOverride: ~
 
+# imagePullSecrets -- Global image pull secrets
+# A list of secrets to use for pulling images from private registries.
+# Example:
+# imagePullSecrets:
+#   - name: "my-registry-secret"
+imagePullSecrets: []
+
 webhook:
   # -- (string) webhook failure policy
   failurePolicy: Ignore # or "Fail"

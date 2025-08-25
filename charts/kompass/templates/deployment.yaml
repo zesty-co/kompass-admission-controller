@@ -18,6 +18,10 @@ spec:
       annotations:
         checksum/webhook-tls: {{ include (print $.Template.BasePath "/mutatingWebhook.yaml") . | sha256sum }}
     spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       serviceAccountName: "{{ include "kompass-admission-controller.sa" . }}"
       {{- if .Values.deployment.nodeSelector }}
       nodeSelector:
