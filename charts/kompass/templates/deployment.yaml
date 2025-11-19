@@ -68,14 +68,6 @@ spec:
                   fieldPath: metadata.namespace
             - name: MANAGER_HOST
               value: {{ .Values.grpc.endpoint }}
-            - name: KOMPASS_CHART_VERSION
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ include "kompass-admission-controller.globalConfig" . }}
-                  key: kompass_chart_version
-            - name: ACTION_TAKER_CHART_VERSION
-              value: {{ .Chart.Version }}
-
       volumes:
         - name: webhook-tls
           secret:
