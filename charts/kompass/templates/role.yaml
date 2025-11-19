@@ -34,3 +34,12 @@ rules:
     - create
     - patch
     - update
+  - apiGroups:
+    - ""
+  - resources:
+    - configmaps
+  - resourceNames:
+    - "{{ include "kompass-admission-controller.globalConfig" . }}"
+  - verbs:
+    - get
+    - list
