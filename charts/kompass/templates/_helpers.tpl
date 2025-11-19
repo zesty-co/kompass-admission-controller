@@ -100,3 +100,14 @@ app.kubernetes.io/name: {{ include "kompass-admission-controller.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
+{{/*
+global configuration configmap
+*/}}
+{{- define "kompass-admission-controller.globalConfig" -}}
+  {{- if and .Values.global .Values.global.globalConfigName }}
+      {{- .Values.global.globalConfigName -}}
+  {{- else -}}
+      global-config
+  {{- end }}
+{{- end }}
+
