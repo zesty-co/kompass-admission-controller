@@ -105,7 +105,7 @@ global configuration configmap
 */}}
 {{- define "kompass-admission-controller.globalConfig" -}}
   {{- if and .Values.global .Values.global.globalConfigName }}
-      {{- .Values.global.victoriaMetricsNameOverride -}}
+      {{- .Values.global.globalConfigName -}}
   {{- else -}}
       global-config
   {{- end }}
