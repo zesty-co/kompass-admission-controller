@@ -101,9 +101,13 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
-global-config configmap
+global configuration configmap
 */}}
 {{- define "kompass-admission-controller.globalConfig" -}}
-global-config
+  {{- if and .Values.global .Values.global.globalConfigName }}
+      {{- .Values.global.victoriaMetricsNameOverride -}}
+  {{- else -}}
+      global-config
+  {{- end }}
 {{- end }}
 
