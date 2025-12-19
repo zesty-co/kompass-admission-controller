@@ -21,11 +21,11 @@ spec:
       serviceAccountName: "{{ include "kompass-admission-controller.sa" . }}"
       {{- if .Values.deployment.nodeSelector }}
       nodeSelector:
-      {{- toYaml .Values.deployment.nodeSelector | nindent 10 }}
+      {{- toYaml .Values.deployment.nodeSelector | nindent 8 }}
       {{- end }}
       {{- if .Values.deployment.tolerations }}
       tolerations:
-      {{- toYaml .Values.deployment.tolerations | nindent 10 }}
+      {{- toYaml .Values.deployment.tolerations | nindent 8 }}
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
