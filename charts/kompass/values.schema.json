@@ -1,0 +1,361 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "additionalProperties": true,
+  "properties": {
+    "cxLogging": {
+      "additionalProperties": true,
+      "properties": {
+        "apiKey": {
+          "default": "",
+          "title": "apiKey",
+          "type": "string"
+        },
+        "clusterName": {
+          "default": "",
+          "title": "clusterName",
+          "type": "string"
+        },
+        "enabled": {
+          "default": false,
+          "title": "enabled",
+          "type": "boolean"
+        },
+        "ingressUrl": {
+          "default": "https://ingress.eu2.coralogix.com/",
+          "format": "uri",
+          "title": "ingressUrl",
+          "type": "string"
+        }
+      },
+      "required": [],
+      "title": "cxLogging",
+      "type": "object"
+    },
+    "deployment": {
+      "additionalProperties": false,
+      "properties": {
+        "image": {
+          "additionalProperties": false,
+          "properties": {
+            "pullPolicy": {
+              "default": "Always",
+              "description": "Image pull policy (e.g., Always, IfNotPresent, Never)",
+              "enum": [
+                "Always",
+                "IfNotPresent",
+                "Never"
+              ],
+              "required": [],
+              "title": "pullPolicy"
+            },
+            "repository": {
+              "default": "672188301118.dkr.ecr.eu-west-1.amazonaws.com/zesty-k8s/action-taker",
+              "description": "Image repository",
+              "title": "repository",
+              "type": "string"
+            },
+            "tag": {
+              "default": "stable",
+              "description": "Image tag (version)",
+              "title": "tag",
+              "type": "string"
+            }
+          },
+          "required": [
+            "repository",
+            "pullPolicy",
+            "tag"
+          ],
+          "title": "image",
+          "type": "object"
+        },
+        "nodeSelector": {
+          "additionalProperties": true,
+          "description": "Node selector for scheduling",
+          "required": [],
+          "title": "nodeSelector",
+          "type": "object"
+        },
+        "replicaCount": {
+          "default": 2,
+          "description": "Number of replicas for the deployment",
+          "minimum": 0,
+          "title": "replicaCount",
+          "type": "integer"
+        },
+        "resources": {
+          "additionalProperties": false,
+          "properties": {
+            "limits": {
+              "additionalProperties": false,
+              "properties": {
+                "memory": {
+                  "default": "2Gi",
+                  "description": "Maximum memory limit for the container",
+                  "pattern": "^[0-9]+(\\.[0-9]+)?(Ki|Mi|Gi|Ti|Pi|Ei|k|M|G|T|P|E)?$",
+                  "title": "memory",
+                  "type": "string"
+                }
+              },
+              "required": [],
+              "title": "limits",
+              "type": "object"
+            },
+            "requests": {
+              "additionalProperties": false,
+              "properties": {
+                "cpu": {
+                  "default": "250m",
+                  "description": "CPU request for scheduling",
+                  "pattern": "^[0-9]+(\\.[0-9]+)?m?$",
+                  "title": "cpu",
+                  "type": "string"
+                },
+                "memory": {
+                  "default": "2Gi",
+                  "description": "Memory request for scheduling",
+                  "pattern": "^[0-9]+(\\.[0-9]+)?(Ki|Mi|Gi|Ti|Pi|Ei|k|M|G|T|P|E)?$",
+                  "title": "memory",
+                  "type": "string"
+                }
+              },
+              "required": [],
+              "title": "requests",
+              "type": "object"
+            }
+          },
+          "required": [],
+          "title": "resources",
+          "type": "object"
+        },
+        "tolerations": {
+          "description": "Tolerations for scheduling onto nodes with taints",
+          "items": {
+            "required": []
+          },
+          "title": "tolerations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "replicaCount",
+        "image"
+      ],
+      "title": "deployment",
+      "type": "object"
+    },
+    "fullnameOverride": {
+      "default": "",
+      "description": "Override the fully qualified name",
+      "title": "fullnameOverride",
+      "type": "string"
+    },
+    "global": {
+      "additionalProperties": true,
+      "properties": {
+        "cxLogging": {
+          "additionalProperties": true,
+          "properties": {
+            "apiKey": {
+              "default": "",
+              "title": "apiKey",
+              "type": "string"
+            },
+            "clusterName": {
+              "default": "",
+              "title": "clusterName",
+              "type": "string"
+            },
+            "enabled": {
+              "default": false,
+              "title": "enabled",
+              "type": "boolean"
+            },
+            "ingressUrl": {
+              "default": "https://ingress.eu2.coralogix.com/",
+              "format": "uri",
+              "title": "ingressUrl",
+              "type": "string"
+            }
+          },
+          "required": [],
+          "title": "cxLogging",
+          "type": "object"
+        }
+      },
+      "required": [],
+      "title": "global",
+      "type": "object"
+    },
+    "grpc": {
+      "additionalProperties": false,
+      "properties": {
+        "endpoint": {
+          "default": "",
+          "description": "gRPC service endpoint",
+          "title": "endpoint",
+          "type": "string"
+        },
+        "port": {
+          "default": 50051,
+          "description": "Default gRPC port",
+          "maximum": 65535,
+          "minimum": 1,
+          "title": "port",
+          "type": "integer"
+        },
+        "server": {
+          "additionalProperties": false,
+          "properties": {
+            "port": {
+              "default": 50052,
+              "description": "Port for the gRPC server",
+              "maximum": 65535,
+              "minimum": 1,
+              "title": "port",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "port"
+          ],
+          "title": "server",
+          "type": "object"
+        }
+      },
+      "required": [
+        "server",
+        "port"
+      ],
+      "title": "grpc",
+      "type": "object"
+    },
+    "insights": {
+      "additionalProperties": false,
+      "properties": {
+        "secret": {
+          "default": "kompass-insights-secret",
+          "description": "Override the Kompass Insights generated secret name",
+          "title": "secret",
+          "type": "string"
+        },
+        "service": {
+          "default": "kompass-insights-svc",
+          "description": "Override the Kompass Insights generated service name",
+          "title": "service",
+          "type": "string"
+        }
+      },
+      "required": [
+        "secret",
+        "service"
+      ],
+      "title": "insights",
+      "type": "object"
+    },
+    "log": {
+      "additionalProperties": false,
+      "properties": {
+        "level": {
+          "default": 0,
+          "description": "Log level to use",
+          "title": "level",
+          "type": "integer"
+        },
+        "remote": {
+          "default": true,
+          "description": "Enable or disable remote logging features",
+          "title": "remote",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "level",
+        "remote"
+      ],
+      "title": "log",
+      "type": "object"
+    },
+    "nameOverride": {
+      "default": "",
+      "description": "Override the default name",
+      "title": "nameOverride",
+      "type": "string"
+    },
+    "pdb": {
+      "additionalProperties": true,
+      "properties": {
+        "maxUnavailable": {
+          "default": 1,
+          "description": "Maximum number of unavailable pods in the pod disruption budget",
+          "title": "maxUnavailable",
+          "type": "integer"
+        }
+      },
+      "required": [],
+      "title": "pdb",
+      "type": "object"
+    },
+    "service": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "default": "kompass-admission-controller-svc",
+          "description": "Name of the controller service",
+          "title": "name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "service",
+      "type": "object"
+    },
+    "serviceAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "annotations": {
+          "additionalProperties": true,
+          "description": "Annotations to add to the service account",
+          "required": [],
+          "title": "annotations",
+          "type": "object"
+        }
+      },
+      "required": [],
+      "title": "serviceAccount",
+      "type": "object"
+    },
+    "webhook": {
+      "additionalProperties": false,
+      "properties": {
+        "failurePolicy": {
+          "default": "Ignore",
+          "description": "Webhook failure policy",
+          "enum": [
+            "Ignore",
+            "Fail"
+          ],
+          "required": [],
+          "title": "failurePolicy"
+        }
+      },
+      "required": [
+        "failurePolicy"
+      ],
+      "title": "webhook",
+      "type": "object"
+    }
+  },
+  "required": [
+    "webhook",
+    "insights",
+    "grpc",
+    "deployment",
+    "service",
+    "serviceAccount",
+    "log"
+  ],
+  "type": "object"
+}
