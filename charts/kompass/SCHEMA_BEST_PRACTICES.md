@@ -98,63 +98,6 @@ items: []
 failurePolicy: Ignore
 ```
 
-### Multiple Types (Union Types)
-
-Use an array of types when a field can accept multiple types, such as allowing both `null` and a specific type:
-
-```yaml
-# @schema
-# type: [string, "null"]
-# required: false
-# pattern: ^[0-9]+(\.[0-9]+)?m?$
-# @schema
-cpu:
-```
-
-**What this does:**
-- Allows the field to be either a `string` or `null`
-- Useful for optional fields where you want to define the field without providing a default value
-- The pattern validation applies only when a string value is provided
-
-**Common Use Cases:**
-
-1. **Optional Resource Limits/Requests** - Allow users to define or omit specific resources:
-   ```yaml
-   # @schema
-   # type: object
-   # required: false
-   # additionalProperties: true
-   # @schema
-   limits:
-     # @schema
-     # type: [string, "null"]
-     # required: false
-     # pattern: ^[0-9]+(\.[0-9]+)?m?$
-     # @schema
-     cpu:
-     # @schema
-     # type: [string, "null"]
-     # required: false
-     # pattern: ^[0-9]+(\.[0-9]+)?(Ki|Mi|Gi|Ti|Pi|Ei|k|M|G|T|P|E)?$
-     # @schema
-     memory: 2Gi
-   ```
-
-2. **Optional Configuration Values** - Define schema without forcing a default:
-   ```yaml
-   # @schema
-   # type: [string, "null"]
-   # required: false
-   # @schema
-   customValue:
-   ```
-
-**Important Notes:**
-- Use `"null"` (quoted) in the type array, not `null` (unquoted)
-- Pattern validation only applies to non-null values
-- This is different from `required: false` - the field can exist with a `null` value
-- Allows three states: field omitted, field with `null` value, field with actual value
-
 ---
 
 ## Required Fields
@@ -356,11 +299,46 @@ annotations: {}
    nodeSelector: {}
    ```
 
+**Advanced Pattern Properties for Kubernetes Resources:**
+
+You can use multiple patterns to apply different validation rules based on property names. This is particularly useful for Kubernetes resource limits/requests:
+
+```yaml
+# @schema
+# type: object
+# required: false
+# additionalProperties: true
+# patternProperties:
+#   "^cpu$":
+#     type: string
+#     pattern: ^[0-9]+(\.[0-9]+)?m?$
+#   "^memory$":
+#     type: string
+#     pattern: ^[0-9]+(\.[0-9]+)?(Ki|Mi|Gi|Ti|Pi|Ei|k|M|G|T|P|E)?$
+# @schema
+limits:
+  memory: 2Gi
+```
+
+**What this does:**
+- Properties matching `^cpu$` validate against CPU pattern
+- Properties matching `^memory$` validate against memory pattern
+- All other properties are allowed by `additionalProperties: true` without specific validation
+- Users can add any resource type: `cpu`, `memory`, `ephemeral-storage`, `nvidia.com/gpu`, `hugepages-2Mi`, etc.
+- No need to explicitly define fields - avoids null values in rendered manifests
+
+**Benefits:**
+- **No null values** - Fields not defined in defaults won't appear as `null` in rendered manifests
+- **Flexible** - Users can add any Kubernetes resource type
+- **Validated** - Pattern matching ensures correct format for CPU and memory resources
+- **Clean defaults** - Only include resources you actually want to set by default
+
 **Important Notes:**
 - The pattern `".*"` matches all property names
-- You can use more specific patterns to validate different property name formats
+- More specific patterns are evaluated first, then fall back to `".*"`
 - `patternProperties` works alongside `additionalProperties` - both can be used together
 - This prevents common mistakes where users might set numeric or boolean values instead of strings
+- **Best for Kubernetes resources** - Avoids the `oneOf failed` validation errors from null values
 
 #### 1. Global Configuration Objects
 
@@ -467,37 +445,30 @@ resources:
   # type: object
   # required: false
   # additionalProperties: true
+  # patternProperties:
+  #   "^cpu$":
+  #     type: string
+  #     pattern: ^[0-9]+(\.[0-9]+)?m?$
+  #   "^memory$":
+  #     type: string
+  #     pattern: ^[0-9]+(\.[0-9]+)?(Ki|Mi|Gi|Ti|Pi|Ei|k|M|G|T|P|E)?$
   # @schema
   limits:
-    # @schema
-    # type: [string, "null"]
-    # required: false
-    # pattern: ^[0-9]+(\.[0-9]+)?m?$
-    # @schema
-    cpu:
-    # @schema
-    # type: [string, "null"]
-    # required: false
-    # pattern: ^[0-9]+(\.[0-9]+)?(Ki|Mi|Gi|Ti|Pi|Ei|k|M|G|T|P|E)?$
-    # @schema
     memory: 2Gi
   # @schema
   # type: object
   # required: false
   # additionalProperties: true
+  # patternProperties:
+  #   "^cpu$":
+  #     type: string
+  #     pattern: ^[0-9]+(\.[0-9]+)?m?$
+  #   "^memory$":
+  #     type: string
+  #     pattern: ^[0-9]+(\.[0-9]+)?(Ki|Mi|Gi|Ti|Pi|Ei|k|M|G|T|P|E)?$
   # @schema
   requests:
-    # @schema
-    # type: [string, "null"]
-    # required: false
-    # pattern: ^[0-9]+(\.[0-9]+)?m?$
-    # @schema
     cpu: 250m
-    # @schema
-    # type: [string, "null"]
-    # required: false
-    # pattern: ^[0-9]+(\.[0-9]+)?(Ki|Mi|Gi|Ti|Pi|Ei|k|M|G|T|P|E)?$
-    # @schema
     memory: 2Gi
 ```
 
@@ -505,7 +476,7 @@ resources:
 - **nodeSelector/annotations**: Accept arbitrary key-value pairs for Kubernetes labels and annotations. Using `patternProperties` ensures all values are strings
 - **tolerations/extraEnv**: Accept arrays of user-defined configurations
 - **securityContext**: Allows users to define pod/container security settings. Nested objects and arrays like `capabilities`, `capabilities.drop`, and `seccompProfile` are also optional - users can omit security restrictions if not needed
-- **resources**: While best practice is to set resource limits/requests, users can omit them for development or when relying on namespace defaults. All nested fields are also optional - users can specify only limits, only requests, or specific resources within each. Using `type: [string, "null"]` allows fields to be defined without default values (like `cpu:`) or with values (like `memory: 2Gi`)
+- **resources**: Uses `patternProperties` to validate resource fields without explicitly defining them. This avoids null values in rendered manifests while ensuring correct format for CPU (matching `^cpu$`) and memory resources (matching `^memory$`). Users can add any Kubernetes resource type, and only resources with actual values appear in the final manifest
 
 #### 4. Flexible Configuration Objects
 
