@@ -98,15 +98,23 @@
                   "default": "",
                   "description": "CPU limit for the container",
                   "pattern": "^[0-9]+(\\.[0-9]+)?m?$",
+                  "required": [],
                   "title": "cpu",
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "memory": {
                   "default": "2Gi",
                   "description": "Maximum memory limit for the container",
                   "pattern": "^[0-9]+(\\.[0-9]+)?(Ki|Mi|Gi|Ti|Pi|Ei|k|M|G|T|P|E)?$",
+                  "required": [],
                   "title": "memory",
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 }
               },
               "required": [],
@@ -120,15 +128,23 @@
                   "default": "250m",
                   "description": "CPU request for scheduling",
                   "pattern": "^[0-9]+(\\.[0-9]+)?m?$",
+                  "required": [],
                   "title": "cpu",
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "memory": {
                   "default": "2Gi",
                   "description": "Memory request for scheduling",
                   "pattern": "^[0-9]+(\\.[0-9]+)?(Ki|Mi|Gi|Ti|Pi|Ei|k|M|G|T|P|E)?$",
+                  "required": [],
                   "title": "memory",
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 }
               },
               "required": [],

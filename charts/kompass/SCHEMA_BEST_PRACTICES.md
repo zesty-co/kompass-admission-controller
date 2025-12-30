@@ -98,6 +98,63 @@ items: []
 failurePolicy: Ignore
 ```
 
+### Multiple Types (Union Types)
+
+Use an array of types when a field can accept multiple types, such as allowing both `null` and a specific type:
+
+```yaml
+# @schema
+# type: [string, "null"]
+# required: false
+# pattern: ^[0-9]+(\.[0-9]+)?m?$
+# @schema
+cpu:
+```
+
+**What this does:**
+- Allows the field to be either a `string` or `null`
+- Useful for optional fields where you want to define the field without providing a default value
+- The pattern validation applies only when a string value is provided
+
+**Common Use Cases:**
+
+1. **Optional Resource Limits/Requests** - Allow users to define or omit specific resources:
+   ```yaml
+   # @schema
+   # type: object
+   # required: false
+   # additionalProperties: true
+   # @schema
+   limits:
+     # @schema
+     # type: [string, "null"]
+     # required: false
+     # pattern: ^[0-9]+(\.[0-9]+)?m?$
+     # @schema
+     cpu:
+     # @schema
+     # type: [string, "null"]
+     # required: false
+     # pattern: ^[0-9]+(\.[0-9]+)?(Ki|Mi|Gi|Ti|Pi|Ei|k|M|G|T|P|E)?$
+     # @schema
+     memory: 2Gi
+   ```
+
+2. **Optional Configuration Values** - Define schema without forcing a default:
+   ```yaml
+   # @schema
+   # type: [string, "null"]
+   # required: false
+   # @schema
+   customValue:
+   ```
+
+**Important Notes:**
+- Use `"null"` (quoted) in the type array, not `null` (unquoted)
+- Pattern validation only applies to non-null values
+- This is different from `required: false` - the field can exist with a `null` value
+- Allows three states: field omitted, field with `null` value, field with actual value
+
 ---
 
 ## Required Fields
@@ -413,13 +470,13 @@ resources:
   # @schema
   limits:
     # @schema
-    # type: string
+    # type: [string, "null"]
     # required: false
     # pattern: ^[0-9]+(\.[0-9]+)?m?$
     # @schema
     cpu:
     # @schema
-    # type: string
+    # type: [string, "null"]
     # required: false
     # pattern: ^[0-9]+(\.[0-9]+)?(Ki|Mi|Gi|Ti|Pi|Ei|k|M|G|T|P|E)?$
     # @schema
@@ -431,13 +488,13 @@ resources:
   # @schema
   requests:
     # @schema
-    # type: string
+    # type: [string, "null"]
     # required: false
     # pattern: ^[0-9]+(\.[0-9]+)?m?$
     # @schema
     cpu: 250m
     # @schema
-    # type: string
+    # type: [string, "null"]
     # required: false
     # pattern: ^[0-9]+(\.[0-9]+)?(Ki|Mi|Gi|Ti|Pi|Ei|k|M|G|T|P|E)?$
     # @schema
@@ -445,10 +502,10 @@ resources:
 ```
 
 **Use Case:** These Kubernetes configuration fields are optional since most users don't need to customize them:
-- **nodeSelector/annotations**: Accept arbitrary key-value pairs for Kubernetes labels and annotations
+- **nodeSelector/annotations**: Accept arbitrary key-value pairs for Kubernetes labels and annotations. Using `patternProperties` ensures all values are strings
 - **tolerations/extraEnv**: Accept arrays of user-defined configurations
 - **securityContext**: Allows users to define pod/container security settings. Nested objects and arrays like `capabilities`, `capabilities.drop`, and `seccompProfile` are also optional - users can omit security restrictions if not needed
-- **resources**: While best practice is to set resource limits/requests, users can omit them for development or when relying on namespace defaults. All nested fields are also optional - users can specify only limits, only requests, or specific resources within each
+- **resources**: While best practice is to set resource limits/requests, users can omit them for development or when relying on namespace defaults. All nested fields are also optional - users can specify only limits, only requests, or specific resources within each. Using `type: [string, "null"]` allows fields to be defined without default values (like `cpu:`) or with values (like `memory: 2Gi`)
 
 #### 4. Flexible Configuration Objects
 
@@ -595,7 +652,7 @@ JSON Schema supports these built-in formats:
 
 ```yaml
 # @schema
-# type: string
+# type: [string, "null"]
 # required: false
 # pattern: ^[0-9]+(\.[0-9]+)?m?$
 # @schema
@@ -611,18 +668,20 @@ cpu: 250m
 **Valid Examples:**
 - Millicores: `250m`, `1000m`, `500m`
 - Cores: `1`, `0.5`, `2`, `1.5`
+- Null value: `cpu:` (field defined without value)
 
 **Invalid Examples:** `-1`, `1.5m` (decimal with millicore suffix), `1k`, `abc`
 
 **Best Practice:** Both formats are valid and should be used based on context:
 - Use **millicores** (`250m`) for precise small allocations
 - Use **cores** (`1`, `0.5`) for simpler whole or fractional core values
+- Use `type: [string, "null"]` to allow defining the field without a default value
 
 #### Memory Resources
 
 ```yaml
 # @schema
-# type: string
+# type: [string, "null"]
 # required: false
 # pattern: ^[0-9]+(\.[0-9]+)?(Ki|Mi|Gi|Ti|Pi|Ei|k|M|G|T|P|E)?$
 # @schema
@@ -636,11 +695,15 @@ memory: 2Gi
     - **Binary units (preferred):** `Ki`, `Mi`, `Gi`, `Ti`, `Pi`, `Ei` (1024-based)
     - **Decimal units:** `k`, `M`, `G`, `T`, `P`, `E` (1000-based)
 
-**Valid Examples:** `2Gi`, `512Mi`, `1.5Gi`, `1000000000` (bytes)
+**Valid Examples:** 
+- `2Gi`, `512Mi`, `1.5Gi`, `1000000000` (bytes)
+- Null value: `memory:` (field defined without value)
 
 **Invalid Examples:** `-1Gi`, `2GB`, `1.5`, `abc`
 
-**Best Practice:** Prefer binary units (`Ki`, `Mi`, `Gi`) for memory as they're more commonly used in Kubernetes.
+**Best Practice:** 
+- Prefer binary units (`Ki`, `Mi`, `Gi`) for memory as they're more commonly used in Kubernetes
+- Use `type: [string, "null"]` to allow defining the field without a default value
 
 ### Why Use Patterns Instead of Format?
 
