@@ -101,6 +101,27 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
+Resolve imagePullSecrets with precedence: global list > component list > legacy single secret.
+*/}}
+{{- define "kompass-admission-controller.imagePullSecrets" -}}
+{{- $global := .Values.global | default dict -}}
+{{- $globalList := $global.imagePullSecrets | default list -}}
+{{- $componentList := .Values.imagePullSecrets | default list -}}
+{{- $legacyName := (($global.imagePullSecret) | default dict).name | default "" -}}
+{{- $resolved := list -}}
+{{- if gt (len $globalList) 0 -}}
+{{- $resolved = $globalList -}}
+{{- else if gt (len $componentList) 0 -}}
+{{- $resolved = $componentList -}}
+{{- else if ne $legacyName "" -}}
+{{- $resolved = list (dict "name" $legacyName) -}}
+{{- end -}}
+{{- if gt (len $resolved) 0 -}}
+{{- toYaml $resolved -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 global configuration configmap
 */}}
 {{- define "kompass-admission-controller.globalConfig" -}}
