@@ -1,4 +1,9 @@
 global:
+  # -- (array) Global image pull secrets (precreated). Takes precedence over the component list.
+  imagePullSecrets: []
+  # -- (object) Legacy single image pull secret, used as a fallback when no list is set.
+  imagePullSecret:
+    name: ""
   cxLogging:
     enabled: false
     clusterName: ""
@@ -8,6 +13,9 @@ global:
 
 # -- (string) Override the default name
 nameOverride: ~
+
+# -- (array) Component image pull secrets. Used when global.imagePullSecrets is empty.
+imagePullSecrets: []
 
 # -- (string) Override the fully qualified name
 fullnameOverride: ~
